@@ -1,0 +1,19 @@
+
+##############################
+FROM adoptopenjdk/openjdk11:jre-11.0.7_10-ubuntu
+
+RUN echo "Docker build starts. Using adoptopenjdk/openjdk11:jre-11.0.7_10-ubuntu as base image"
+
+RUN echo "maintained by : Abhiroop Ghatak => abhiroop.g@hcl.com"
+
+RUN apt install curl
+
+
+WORKDIR /usr/app
+
+RUN curl  -u abhiroop:Mala#123 -o emart-backend-service-0.0.1-SNAPSHOT.jar "http://nxrm-sonatype-nexus-nexus.apps.ocpibmcloud.cnpocp.local/repository/maven-snapshots/com/abhiroop/emart/emart-backend/0.0.1-SNAPSHOT/emart-backend-service-0.0.1-SNAPSHOT.jar"
+
+EXPOSE 8080
+CMD java -jar emart-backend-service-0.0.1-SNAPSHOT.jar
+
+USER 1005

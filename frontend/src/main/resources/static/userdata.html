@@ -1,0 +1,523 @@
+<html>
+
+<head>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+	<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+	<title>Spring Boot AngularJS example</title>
+	<script type="text/javascript">
+		var app = angular.module("CustomerManagement", []);
+		//Controller Part
+		app
+			.controller(
+				"CustomerController",
+				function ($scope, $http) {
+
+					$scope.customers = [];
+					$scope.errvar = '';
+					$scope.pharmasvcerr = '';
+					$scope.delusermessage = '';
+					$scope.customerForm = {
+						id: -1,
+						name: "",
+						email: ""
+					};
+					$scope.inv = '';
+					$scope.salesdata = '';
+					_userServiceBackendConnectivity();
+					_pharmaServiceBackendConnectivity();
+					//Now load the data from server
+					_refreshCustomerData();
+
+					//HTTP POST/PUT methods for add/edit customer 
+					// with the help of id, we are going to find out whether it is put or post operation
+
+					$scope.submitCustomer = function () {
+
+						var method = "";
+						var url = "";
+						method = "POST";
+						url = '/addCustomer';
+
+						$http({
+							method: method,
+							url: url,
+							data: angular.toJson($scope.customerForm),
+							headers: {
+								'Content-Type': 'application/json'
+							}
+						}).then(_success, _error);
+					};
+
+					//HTTP DELETE- delete customer by Id
+					$scope.deleteCustomer = function (customer) {
+						$http({
+							method: 'DELETE',
+							url: '/deleteCustomer/' + customer.id
+						})
+							.then(
+								function successCallback(response) {
+									console.log(response.data);
+									if (response.data.message === 'FAIL') {
+										$scope.delusermessage = 'Something went wrong in deletion Operation. Please connect admin';
+									} else if (response.data.message === 'SUCCESS') {
+										$scope.delusermessage = 'User deleted successfully.';
+									}
+									console
+										.log("scope.delusermessage"
+											+ $scope.delusermessage);
+									_refreshCustomerData();
+								},
+								function errorCallback(response) {
+									console
+										.log(response.statusText);
+
+								});
+					};
+
+					// In case of edit, populate form fields and assign form.id with customer id
+					$scope.editCustomer = function (customer) {
+
+						$scope.customerForm.name = customer.name;
+						$scope.customerForm.email = customer.email;
+						$scope.customerForm.id = customer.id;
+					};
+
+					$scope.dataReload = function () {
+						_refreshCustomerData();
+						$scope.delusermessage = '';
+					}
+					function _pharmaServiceBackendConnectivity() {
+						$scope.pharmasvcerr = '';
+						$http({
+							method: 'GET',
+							url: '/pharmacyServiceBackendConnectivity'
+						})
+							.then(
+								function successCallback(response) {
+									console.log(response.data);
+									if (response.data.message === 'DOWN') {
+										$scope.pharmasvcerr = 'DISCONNECTED';
+										console.log("scope.pharmasvcerr"
+											+ $scope.pharmasvcerr);
+									} else {
+										$scope.pharmasvcerr = 'CONNECTED';
+									}
+								},
+								function errorCallback(response) {
+									$scope.pharmasvcerr = 'No Connectivity with Back-end System';
+
+								});
+					}
+					function _userServiceBackendConnectivity() {
+						$scope.errvar = '';
+						$http({
+							method: 'GET',
+							url: '/userServiceBackendConnectivity'
+						})
+							.then(
+								function successCallback(response) {
+									console.log(response.data);
+									if (response.data.message === 'DOWN') {
+										$scope.errvar = 'DISCONNECTED';
+										console.log("scope.errvar"
+											+ $scope.errvar);
+									} else {
+										$scope.errvar = 'CONNECTED';
+									}
+								},
+								function errorCallback(response) {
+									$scope.errvar = 'No Connectivity with Back-end System';
+
+								});
+					}
+					/* Private Methods */
+					//HTTP GET- get all customers collection
+					function _refreshCustomerData() {
+						$http({
+							method: 'GET',
+							url: '/getAllCustomers'
+						}).then(function successCallback(response) {
+							$scope.customers = response.data;
+							console.log(response.data);
+						}, function errorCallback(response) {
+							console.log(response.statusText);
+						});
+					}
+
+					function _success(response) {
+						_refreshCustomerData();
+						_clearFormData()
+					}
+
+					function _error(response) {
+						console.log(response.statusText);
+					}
+
+					//HTTP GET- get all customers collection
+					$scope.getAvailableStock = function() {
+						$http({
+							method: 'GET',
+							url: '/getAvailableStock'
+						}).then(function successCallback(response) {
+							$scope.inv = response.data;
+							console.log("inventory data received ", response.data);
+						}, function errorCallback(response) {
+							console.log(response.statusText);
+						});
+					}
+
+					
+					$scope.getSalesData = function() {
+						$http({
+							method: 'GET',
+							url: '/getSalesData'
+						}).then(function successCallback(response) {
+							$scope.salesdata = response.data;
+							console.log("salesdata data received ", response.data);
+						}, function errorCallback(response) {
+							console.log(response.statusText);
+						});
+						$scope.getAvailableStock();
+					}
+
+					//Clear the form
+					function _clearFormData() {
+						$scope.customerForm.id = -1;
+						$scope.customerForm.name = "";
+						$scope.customerForm.email = "";
+
+					}
+					;
+				});
+	</script>
+	<style>
+		.carousel-control-next-icon:after {
+			content: '>';
+			font-size: 55px;
+			color: red;
+		}
+
+		.carousel-control-prev-icon:after {
+			content: '<';
+			font-size: 55px;
+			color: red;
+		}
+
+		nav>.nav.nav-tabs {
+
+			border: none;
+			color: #fff;
+			background: #272e38;
+			border-radius: 0;
+
+		}
+
+		nav>div a.nav-item.nav-link,
+		nav>div a.nav-item.nav-link.active {
+			border: none;
+			padding: 18px 25px;
+			color: #fff;
+			background: #272e38;
+			border-radius: 0;
+		}
+
+		nav>div a.nav-item.nav-link.active:after {
+			content: "";
+			position: relative;
+			bottom: -60px;
+			left: -10%;
+			border: 15px solid transparent;
+			border-top-color: #e74c3c;
+		}
+
+		.tab-content {
+			background: #fdfdfd;
+			line-height: 15px;
+			border: 1px solid #ddd;
+			border-top: 5px solid #e74c3c;
+			border-bottom: 2px solid #e74c3c;
+			padding: 20px 15px;
+		}
+
+		nav>div a.nav-item.nav-link:hover,
+		nav>div a.nav-item.nav-link:focus {
+			border: none;
+			background: #e74c3c;
+			color: #fff;
+			border-radius: 0;
+			transition: background 0.20s linear;
+		}
+
+		.blue-button {
+			background: #25A6E1;
+			filter: progid: DXImageTransform.Microsoft.gradient(startColorstr='#25A6E1',
+					endColorstr='#188BC0', GradientType=0);
+			padding: 3px 5px;
+			color: #fff;
+			font-family: 'Helvetica Neue', sans-serif;
+			font-size: 12px;
+			border-radius: 2px;
+			-moz-border-radius: 2px;
+			-webkit-border-radius: 4px;
+			border: 1px solid #1A87B9
+		}
+
+		.red-button {
+			background: #CD5C5C;
+			padding: 3px 5px;
+			color: #fff;
+			font-family: 'Helvetica Neue', sans-serif;
+			font-size: 12px;
+			border-radius: 2px;
+			-moz-border-radius: 2px;
+			-webkit-border-radius: 4px;
+			border: 1px solid #CD5C5C
+		}
+
+		table {
+			font-family: "Helvetica Neue", Helvetica, sans-serif;
+			width: 50%;
+		}
+
+		caption {
+			text-align: left;
+			color: silver;
+			font-weight: bold;
+			text-transform: uppercase;
+			padding: 5px;
+		}
+
+		th {
+			background: green;
+			color: white;
+		}
+
+		tbody tr:nth-child(even) {
+			background: WhiteSmoke;
+		}
+
+		tbody tr td:nth-child(2) {
+			text-align: center;
+		}
+
+		tbody tr td:nth-child(3),
+		tbody tr td:nth-child(4) {
+			text-align: center;
+			font-family: monospace;
+		}
+
+		tfoot {
+			background: SeaBlue;
+			color: white;
+			text-align: right;
+		}
+
+		tfoot tr th:last-child {
+			font-family: monospace;
+		}
+
+		td,
+		th {
+			border: 1px solid gray;
+			width: 25%;
+			text-align: left;
+			padding: 5px 10px;
+		}
+
+		.lead {
+			font-weight: 300;
+			font-size: 2rem;
+		}
+
+		.banner {
+			font-size: 1.1rem;
+			margin: 0;
+			padding: 1rem 1rem;
+			background-color: #23055a;
+			color: white;
+		}
+	</style>
+
+	<head>
+
+	<body ng-app="CustomerManagement" ng-controller="CustomerController">
+
+		<div class="banner text-center">
+			<span class="skiplink-text">Cloud-Native Spring Boot application is
+				ready!</span><br/>
+				<span class="skiplink-text">This Application integrates two backend edge systems of user management and Pharma system which are deployed at different locations.</span>
+		</div>
+
+
+		<div class="container-fluid">
+
+			<nav>
+				<div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+					<a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab"
+						aria-controls="nav-home" aria-selected="true">User Management</a>
+					<a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab"
+						aria-controls="nav-profile"  ng-click="getSalesData()" aria-selected="false">Pharmacy</a>
+
+				</div>
+			</nav>
+			<div class="tab-content " id="nav-tabContent">
+				<div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+
+					<h2 align="center">User Profile Management </h2>
+					<form ng-submit="submitCustomer()">
+						<table align="center">
+							<tr>
+								<th colspan="2">Add/Edit customer</th>
+							</tr>
+							<tr>
+								<td>Customer Name</td>
+								<td><input type="text" ng-model="customerForm.name" /></td>
+							</tr>
+							<tr>
+								<td>Email</td>
+								<td><input type="text" ng-model="customerForm.email" /></td>
+							</tr>
+							<tr>
+								<td colspan="2"><input type="submit" value="Submit" class="blue-button" /></td>
+							</tr>
+						</table>
+					</form>
+					<div ng-if="delusermessage" class="alert alert-success" align="center" role="alert">
+						{{ delusermessage }}
+						<button type="button" class="btn btn-success" ng-click="dataReload()">Refresh
+							Data</button>
+					</div>
+					<table align="center">
+						<tr>
+							<th>Customer Name</th>
+							<th>Email</th>
+							<th>Operations</th>
+						</tr>
+						<tr ng-repeat="customer in customers">
+							<td>{{ customer.name }}</td>
+							<td>{{ customer.email }}</td>
+							<td class=""><a ng-click="editCustomer(customer)" class="blue-button">Edit</a> | <a
+									ng-click="deleteCustomer(customer)" class="red-button">Delete</a></td>
+						</tr>
+					</table>
+					<br />
+					<br />
+					<br />
+					<br />
+					<div align="center" ng-if="errvar === 'DISCONNECTED'" class=" p-3 mb-2 bg-danger text-white">
+						<p class="text-center">No Connectivity with Back-end System.
+							Please connect admin !!!</p>
+					</div>
+					<div ng-if="errvar === 'CONNECTED'" class="p-3 mb-2 bg-success text-white ">
+						<p class="text-center">Connectivity established with backend
+							system.</p>
+					</div>
+				</div>
+				<div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+					<h3 align="center">Pharmacy Management </h3>
+					<div id="myCarousel" class="carousel slide carousel-fade" data-ride="carousel">
+						<div class="carousel-inner">
+							<div class="carousel-item active">
+								<div class="mask flex-center">
+									<div class="container">
+										<div class="row align-items-center">
+											<div class="col-md-7 col-10 order-md-1 order-2">
+												<h4>Sales Data Report <br>
+													</h4>
+												<p>Consolidated sales data received from pharma system <br></p>
+												
+												<div class="card card-pricing text-center ">
+													<span class="h6  rounded-bottom bg-primary text-white shadow-sm">Details</span>
+													<div class="bg-transparent card-header border-0">
+														<h1 class="h3 font-weight-normal text-primary text-center mb-0" data-pricing-value="15">Rs.<span class="price">{{salesdata.totalSale}}</span><span class="h6 text-muted ml-2">/ Total sale made this year.</span></h1>
+													</div>
+													<div class="bg-transparent card-header border-0">
+														<h1 class="h3 font-weight-normal text-primary text-center mb-0" data-pricing-value="15">Rs.<span class="price">{{salesdata.saleOfMonth}}</span><span class="h6 text-muted ml-2">/ Revenue in current month.</span></h1>
+													</div>
+													<div class="bg-transparent card-header border-0">
+														<h1 class="h4 font-weight-normal text-primary text-center mb-0" data-pricing-value="15">Rs.<span class="price">{{salesdata.totalReturnValue}}</span><span class="h6 text-muted ml-2">/ is value of returns for current month.</span></h1>
+													</div>
+													
+												</div>
+											</div>
+											<div class="col-md-5 col-12 order-md-2 order-1"><img
+													src="/images/revenue.png" class="mx-auto" alt="slide"></div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="carousel-item" >
+								<div class="mask flex-center">
+									<div class="container">
+										<div class="row px-md-5 align-items-center" > 
+											<h4>Available Inventory<br>
+												available medical items at the store</h4>
+											<p>Maintain optimal inventory levels, manage expiry dates, and safeguard
+												your margin by avoiding overstocking or running out of stock
+
+											</p>
+											<br />
+											<div class="col-md-7 col-12 order-md-1 order-2">
+												
+												<div class="card card-pricing text-center ">
+													<span class="h6  rounded-bottom bg-primary text-white shadow-sm">Details</span>
+													<div class="bg-transparent card-header border-0">
+														<h1 class="h2 font-weight-normal text-primary text-center mb-0" data-pricing-value="15">Rs.<span class="price">{{inv.totalValue}}</span><span class="h6 text-muted ml-2">/ amount of inventory available at store</span></h1>
+													</div>
+													<div class="bg-transparent card-header border-0">
+														<h1 class="h2 font-weight-normal text-primary text-center mb-0" data-pricing-value="15">No.<span class="price">{{inv.noOfBoxes}}</span><span class="h6 text-muted ml-2">/ boxes are in store.</span></h1>
+													</div>
+													<div class="bg-transparent card-header border-0">
+														<h1 class="h4 font-weight-normal text-primary text-center mb-0" data-pricing-value="15">(dd/mm/yyyy)<span class="price">{{inv.nearestExpiry}}</span><span class="h6 text-muted ml-2">/ is nearest expiry date of a batch</span></h1>
+													</div>
+													
+												</div>
+
+											</div>
+											<div class="col-md-5 col-12 order-md-2 order-1"><img
+													src="/images/inventory.png" class="mx-auto" alt="slide">
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+						</div>
+
+						<a class="carousel-control-next" href="#myCarousel" role="button" data-slide="next"> <span
+								class="carousel-control-next-icon" aria-hidden="true"></span> <span
+								class="sr-only">Next</span> </a>
+					</div>
+					<!--slide end-->
+
+					<br />
+					<br />
+					<br />
+					<br />
+					<div align="center" ng-if="pharmasvcerr === 'DISCONNECTED'" class=" p-3 mb-2 bg-danger text-white">
+						<p class="text-center">No Connectivity with pharmacy System.
+							Please connect admin !!!</p>
+					</div>
+					<div ng-if="pharmasvcerr === 'CONNECTED'" class="p-3 mb-2 bg-success text-white ">
+						<p class="text-center">Connectivity established with pharmacy System.</p>
+					</div>
+				</div>
+
+			</div>
+
+
+		</div>
+
+
+		<footer class="footer mt-auto py-3 bg-light">
+			<div class="container">
+				<span class="text-muted">For support or any questions: Email us at <a href="mailto:ghatak.20@gmail"
+						target="_blank">click-here</a></span>
+			</div>
+		</footer>
+	</body>
+
+</html>
