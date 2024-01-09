@@ -90,7 +90,7 @@ public class GetController {
 
 	private List<Med> getMedList(String d) {
 		List<Med> meds = new ArrayList<Med>();
-		meds.add(new Med("Atarax","Allopathy",3.5, new Date(2024,12 0, 250),  "NM6987") );
+		meds.add(new Med("Atarax","Allopathy",3.5,new Date(2024,12 0, 250),"NM6987"));
 		return meds;
 	}
 }
