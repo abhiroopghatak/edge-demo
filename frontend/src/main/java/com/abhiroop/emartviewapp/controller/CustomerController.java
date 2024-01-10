@@ -37,6 +37,7 @@ public class CustomerController {
 
 	@Value("${service.emart.url}")
 	public void setServiceShoppingUrl(String url) {
+		System.out.println("user service url =>"+url);
 		setEmartUserServiceUrl(url);
 	}
 
@@ -44,6 +45,7 @@ public class CustomerController {
 
 	@Value("${service.pharmacy.url}")
 	public void setPharmacyBackendUrl(String url) {
+		System.out.println("Pharmacy service url =>"+url);
 		setPharmacyServiceUrl(url);
 	}
 
@@ -52,14 +54,16 @@ public class CustomerController {
 	public List<Customer> getAllCustomers(Model model) {
 		List<Customer> listOfCustomers = new ArrayList<Customer>();
 		try {
+			System.out.println("GetAllCustomer rest handle STARTS.");
 			listOfCustomers = restTemplate.getForObject(getEmartUserServiceUrl() + "getAllUsers/", List.class);
 		} catch (RestClientException e) {
 			model.addAttribute("ERR", "No Connectivity with Back-end System");
 			System.out.println("Exception occurred at getAllCustomers =>" + e.getMessage());
 		}
-
+			
 		model.addAttribute("customer", new Customer());
 		model.addAttribute("listOfCustomers", listOfCustomers);
+		System.out.println("GetAllCustomer rest handle ENDS.");
 		return listOfCustomers;
 	}
 
@@ -143,7 +147,7 @@ public class CustomerController {
 	@RequestMapping(value = "/health", method = RequestMethod.GET, headers = "Accept=application/json")
 	public String heartbeat() {
 
-		return "CustomerController is Ready to server Request";
+		return "edge frontend Controller is Ready to server Request";
 	}
 
 	@RequestMapping(value = "/temp", method = RequestMethod.GET, headers = "Accept=application/json")
@@ -189,6 +193,7 @@ public class CustomerController {
 
 	@RequestMapping(value = "/getAvailableStock", method = RequestMethod.GET, headers = "Accept=application/json")
 	public Inventory getAvailableStock(Model model) {
+		System.out.println("getAvailableStock rest handle STARTS.");
 		Inventory inv = null;
 		try {
 			String backendServiceendpoint=getPharmacyServiceUrl() + "getInventory";
@@ -199,12 +204,13 @@ public class CustomerController {
 		}
 
 		model.addAttribute("inv", inv);
-
+		System.out.println("getAvailableStock rest handle ENDS.");
 		return inv;
 	}
 
 	@RequestMapping(value = "/getSalesData", method = RequestMethod.GET, headers = "Accept=application/json")
 	public SaleData getSalesData(Model model) {
+		System.out.println("getSalesData rest handle STARTS.");
 		SaleData sd = new SaleData();
 		try {
 			String totalSalesEndpoint=getPharmacyServiceUrl() + "totalSale";
@@ -219,7 +225,7 @@ public class CustomerController {
 		}
 
 		model.addAttribute("salesdata", sd);
-
+		System.out.println("getSalesData rest handle ENDS.");
 		return sd;
 	}
 }
