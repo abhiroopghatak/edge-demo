@@ -10,6 +10,6 @@ RUN apt install curl
 WORKDIR /usr/app
 
 EXPOSE 8080
-CMD java -jar emart-frontend-dev.jar
+CMD java -jar emart-frontend.jar
 
 USER 1005
