@@ -103,7 +103,13 @@
 										console.log("scope.pharmasvcerr"
 											+ $scope.pharmasvcerr);
 									} else {
+										if (response.data.message === 'UP') {
 										$scope.pharmasvcerr = 'CONNECTED';
+										}else{
+											$scope.pharmasvcerr = 'DISCONNECTED';
+										console.log("scope.pharmasvcerr"
+											+ $scope.pharmasvcerr);
+										}
 									}
 								},
 								function errorCallback(response) {
@@ -125,7 +131,11 @@
 										console.log("scope.errvar"
 											+ $scope.errvar);
 									} else {
+										if (response.data.message === 'UP') {
 										$scope.errvar = 'CONNECTED';
+										}else{
+											$scope.errvar = 'DISCONNECTED';
+										}
 									}
 								},
 								function errorCallback(response) {
