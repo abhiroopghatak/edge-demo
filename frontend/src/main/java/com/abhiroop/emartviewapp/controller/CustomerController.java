@@ -60,7 +60,7 @@ public class CustomerController {
 			model.addAttribute("ERR", "No Connectivity with Back-end System");
 			System.out.println("Exception occurred at getAllCustomers =>" + e.getMessage());
 		}
-			
+		System.out.println("Total user found="+	listOfCustomers.size());
 		model.addAttribute("customer", new Customer());
 		model.addAttribute("listOfCustomers", listOfCustomers);
 		System.out.println("GetAllCustomer rest handle ENDS.");
@@ -74,6 +74,7 @@ public class CustomerController {
 		String connectivityStatus = "DOWN";
 		try {
 			connectivityStatus = restTemplate.getForObject(getEmartUserServiceUrl(), String.class);
+			System.out.println(" user backend service connectivityStatus = "+connectivityStatus);
 			if ("UserData-service App is ready".equals(connectivityStatus)) {
 				serviceStatus = "UP";
 			}
@@ -99,7 +100,7 @@ public class CustomerController {
 		} catch (RestClientException e) {
 			System.out.println("Exception occurred at getCustomerById =>" + e.getMessage());
 		}
-
+		System.out.println("User found="+c);
 		return c;
 	}
 
@@ -181,6 +182,7 @@ public class CustomerController {
 		String connectivityStatus = "DOWN";
 		try {
 			connectivityStatus = restTemplate.getForObject(getPharmacyServiceUrl(), String.class);
+			System.out.println(" Pharma backend service connectivityStatus = "+connectivityStatus);
 			if ("Pharma-service App is ready".equals(connectivityStatus)) {
 				serviceStatus = "UP";
 			}
@@ -202,7 +204,7 @@ public class CustomerController {
 			model.addAttribute("ERR", "No Connectivity with Back-end System");
 			System.out.println("Exception occurred at getInventory =>" + e.getMessage());
 		}
-
+		System.out.println("Inventory found="+	inv);
 		model.addAttribute("inv", inv);
 		System.out.println("getAvailableStock rest handle ENDS.");
 		return inv;
