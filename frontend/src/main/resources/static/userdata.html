@@ -98,24 +98,19 @@
 							.then(
 								function successCallback(response) {
 									console.log(response.data);
-									if (response.data.message === 'DOWN') {
-										$scope.pharmasvcerr = 'DISCONNECTED';
-										console.log("scope.pharmasvcerr"
-											+ $scope.pharmasvcerr);
-									} else {
-										if (response.data.message === 'UP') {
+									console.log("response.status="+response.status);
+									if (response.status == 200) {
 										$scope.pharmasvcerr = 'CONNECTED';
-										}else{
+										
+									} else {
 											$scope.pharmasvcerr = 'DISCONNECTED';
-										console.log("scope.pharmasvcerr"
-											+ $scope.pharmasvcerr);
-										}
 									}
 								},
 								function errorCallback(response) {
 									$scope.pharmasvcerr = 'No Connectivity with Back-end System';
 
 								});
+						console.log("scope.pharmasvcerr="+ $scope.pharmasvcerr);
 					}
 					function _userServiceBackendConnectivity() {
 						$scope.errvar = '';
@@ -126,22 +121,20 @@
 							.then(
 								function successCallback(response) {
 									console.log(response.data);
-									if (response.data.message === 'DOWN') {
-										$scope.errvar = 'DISCONNECTED';
+									console.log("response.status="+response.status);
+									if (response.status == 200 ) {
+										$scope.errvar = 'CONNECTED';
 										console.log("scope.errvar"
 											+ $scope.errvar);
 									} else {
-										if (response.data.message === 'UP') {
-										$scope.errvar = 'CONNECTED';
-										}else{
 											$scope.errvar = 'DISCONNECTED';
 										}
-									}
 								},
 								function errorCallback(response) {
 									$scope.errvar = 'No Connectivity with Back-end System';
 
 								});
+						console.log("scope.errvar"+ $scope.errvar);
 					}
 					/* Private Methods */
 					//HTTP GET- get all customers collection
