@@ -44,11 +44,19 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
+		<!-- micrometer deps added on 18th jan2024 -->
 		<dependency>
-			<groupId>io.micrometer</groupId>
-			<artifactId>micrometer-registry-prometheus</artifactId>
-			<scope>runtime</scope>
+		    <groupId>io.micrometer</groupId>
+		    <artifactId>micrometer-core</artifactId>
+		    <version>1.7.0</version>
 		</dependency>
+		
+		<dependency>
+		    <groupId>io.micrometer</groupId>
+		    <artifactId>micrometer-registry-prometheus</artifactId>
+		    <version>1.7.0</version>
+		</dependency>
+		<!-- micrometer deps added on 18th jan2024 ENDS here-->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
