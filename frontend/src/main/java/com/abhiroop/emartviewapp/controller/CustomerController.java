@@ -70,13 +70,12 @@ public class CustomerController {
 	@RequestMapping(value = "/userServiceBackendConnectivity", method = RequestMethod.GET, headers = "Accept=application/json")
 	public ResponseObject userServiceBackendConnectivity() {
 		ResponseObject r = new ResponseObject();
-		String serviceStatus = "DOWN";
 		String connectivityStatus = "DOWN";
 		try {
 			connectivityStatus = restTemplate.getForObject(getEmartUserServiceUrl(), String.class);
 			System.out.println(" user backend service connectivityStatus = "+connectivityStatus);
 			if ("UserData-service App is ready".equals(connectivityStatus)) {
-				serviceStatus = "UP";
+				connectivityStatus = "UP";
 			}
 		} catch (RestClientException e) {
 			System.out.println("Exception occurred at userServiceBackendConnectivity =>" + e.getMessage());
@@ -178,13 +177,12 @@ public class CustomerController {
 	@RequestMapping(value = "/pharmacyServiceBackendConnectivity", method = RequestMethod.GET, headers = "Accept=application/json")
 	public ResponseObject pharmacyServiceBackendConnectivity() {
 		ResponseObject r = new ResponseObject();
-		String serviceStatus = "DOWN";
 		String connectivityStatus = "DOWN";
 		try {
 			connectivityStatus = restTemplate.getForObject(getPharmacyServiceUrl(), String.class);
 			System.out.println(" Pharma backend service connectivityStatus = "+connectivityStatus);
 			if ("Pharma-service App is ready".equals(connectivityStatus)) {
-				serviceStatus = "UP";
+				connectivityStatus = "UP";
 			}
 		} catch (RestClientException e) {
 			System.out.println("Exception occurred at pharmacyServiceBackendConnectivity =>" + e.getMessage());
