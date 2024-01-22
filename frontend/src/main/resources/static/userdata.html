@@ -99,7 +99,7 @@
 								function successCallback(response) {
 									console.log(response.data);
 									console.log("response.status="+response.status);
-									if (response.status == 200) {
+									if (response.status == 200 && response.data.message == 'UP') {
 										$scope.pharmasvcerr = 'CONNECTED';
 										
 									} else {
@@ -122,7 +122,7 @@
 								function successCallback(response) {
 									console.log(response.data);
 									console.log("response.status="+response.status);
-									if (response.status == 200 ) {
+									if (response.status == 200 && response.data.message == 'UP' ) {
 										$scope.errvar = 'CONNECTED';
 										console.log("scope.errvar"
 											+ $scope.errvar);
